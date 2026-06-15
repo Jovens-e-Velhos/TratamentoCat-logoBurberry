@@ -2,7 +2,7 @@ import pandas as pd
 import openpyxl
 import re
 
-planilhaBrazil = pd.read_excel('Brazil Shipment A26 NO IL SHIPMENT 10 - TABELA DINAMICA.xlsx')
+planilhaBrazil = pd.read_excel('Brazil Shipment A26 NO IL SHIPMENT 9 - TABELA DINAMICA.xlsx')
 planilhaFabricantes = pd.read_excel('Operadores (2).xlsx')
 
 def extracao_denominacao(self):
@@ -221,7 +221,7 @@ def limpeza_tratamento (self):
         'OCULOS', 'VELA',
     ],
     'MANGA': ['OCULOS', 'VELA'],
-    'MALHA': ['OCULOS', 'VELA'],
+    'MALHA': ['OCULOS', 'VELA', 'BRACELETE', 'BRINCO', 'COLAR'],
     'SOLA': [
         'CASACO', 'CARDIGA', 'CAMISETA', 'CAMISA',
         'BOLSA', 'PORTA CARTAO', 'CALCA', 'SUETER',
@@ -469,6 +469,12 @@ def traducao (self):
     'Long'                          : 'LONGO',
     'WOVEN'                         : 'TECIDO PLANO',
     'Straight'                      : 'RETÍLINEA',
+    'FORRO: Full'                   : 'FORRO COMPLETO',
+    'CALF GRAIN LEATHER (BOS TAURUS)':'COURO BOVINO',
+    'COW GRAIN LEATHER (BOS TAURUS)': 'COURO BOVINO',
+    'Above knee'                    : 'ACIMA DO JOELHO',
+    'Half lined'                    : 'MEIO FORRO',
+    'LAMB LEATHER (OVIS ARIES ARIES)':'COURO DE CORDEIRO'
 }
     termos_ordenados = sorted(DICIONARIO_TRADUCAO.keys(), key=len, reverse=True)
     resposta = self
