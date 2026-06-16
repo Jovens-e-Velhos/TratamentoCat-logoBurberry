@@ -628,10 +628,10 @@ function processar(planilhaBrazil, planilhaFab) {
   const HEADERS_FAB = ['Produto(Código Interno)','País','Operador Estrangeiro(Código Interno)','CNPJ','Mensagem Importação','REMOVER'];
   const HEADERS_UN = ['Produto(Código Interno)','Unidade Negócio(Código Interno)','Mensagem Importação','REMOVER'];
   const HEADERS_OP = ['Código Interno','Nome','Código TIN','País','Cidade','Logradouro','Código Subdivisão País','CEP','E-mail','Ativo','Mensagem Importação','Remover'];
-  const HEADERS_OP_IDEN = ['Operador (Código Interno)','Número','Código','Mensagem Importação','Remover'];
+  const HEADERS_OP_IDEN = ['Operador(Código Interno)','Número','Código','Mensagem Importação','Remover'];
 
   const produtos = [], iden = [], fab = [], un = [];
-  const produtosNC = [], idenNC = [];
+  const produtosNC = [], idenNC = [], fabNC = [];
   const operadoresNC = {}, operadoresIdenNC = {};
 
   for (const row of rows) {
@@ -688,10 +688,18 @@ function processar(planilhaBrazil, planilhaFab) {
     } else {
       produtosNC.push(prodRow);
       idenNC.push(idenRow);
+      fabNC.push({
+        'Produto(Código Interno)': codigoInterno,
+        'País': null,
+        'Operador Estrangeiro(Código Interno)': row['Manufacturer #'] || null,
+        'CNPJ': null,
+        'Mensagem Importação': null,
+        'REMOVER': null,
+      });
 
       if (nomeFab && !operadoresNC[nomeFab]) {
         operadoresNC[nomeFab] = {
-          'Código Interno': null,
+          'Código Interno': row['Manufacturer #'] || null,
           'Nome': nomeFab,
           'Código TIN': null,
           'País': row['COO'] || null,
@@ -705,8 +713,8 @@ function processar(planilhaBrazil, planilhaFab) {
           'Remover': null,
         };
         operadoresIdenNC[nomeFab] = {
-          'Operador (Código Interno)': null,
-          'Número': null,
+          'Operador(Código Interno)': row['Manufacturer #'] || null,
+          'Número': row['Manufacturer #'] || null,
           'Código': null,
           'Mensagem Importação': null,
           'Remover': null,
@@ -717,7 +725,7 @@ function processar(planilhaBrazil, planilhaFab) {
 
   return {
     modelo: { Produtos: produtos, Identificadores: iden, Fabricantes: fab, UnidadesNegocio: un },
-    naoCad: { Produtos: produtosNC, Identificadores: idenNC, Fabricantes: [], UnidadesNegocio: [] },
+    naoCad: { Produtos: produtosNC, Identificadores: idenNC, Fabricantes: fabNC, UnidadesNegocio: [] },
     fabNaoCad: { Operadores: Object.values(operadoresNC), Identificadores: Object.values(operadoresIdenNC) },
     stats: { prod: produtos.length, naocad: produtosNC.length, fab: Object.keys(operadoresNC).length },
   };

@@ -63,7 +63,7 @@ def criacao_planilha_catalogo(planilhaOg):
     ]
     
     HEADERS_OPERADORES_IDEN = [
-        'Operador (Código Interno)', 'Número', 'Código', 'Mensagem Importação', 'Remover'
+        'Operador(Código Interno)', 'Número', 'Código', 'Mensagem Importação', 'Remover'
     ]
     
     produtos = []
@@ -73,6 +73,7 @@ def criacao_planilha_catalogo(planilhaOg):
     
     produtos_nao_cad = []
     identificadores_nao_cad = []
+    fabricantes_nao_cad = []
     
     operadores_nao_cad = {}
     operadores_nao_cad_iden = {}
@@ -82,6 +83,7 @@ def criacao_planilha_catalogo(planilhaOg):
         ncm = row['Commodity Code'].replace('.','')
         detalhamento_complementar = row['Traducao']
         nome_fabricantes = row['Manufacturing name']
+        
         
         produto_row = {
             'Código Interno'            : codigo_interno,
@@ -125,10 +127,18 @@ def criacao_planilha_catalogo(planilhaOg):
         else:
             produtos_nao_cad.append(produto_row)
             identificadores_nao_cad.append(identificadores_row)
+            fabricantes_nao_cad.append({
+                'Produto(Código Interno)'              : codigo_interno,
+                'País'                                 : None,
+                'Operador Estrangeiro(Código Interno)' : row['Manufacturer #'],
+                'CNPJ'                                 : None,
+                'Mensagem Importação'                  : None,
+                'REMOVER'                              : None,
+            })
             
             if nome_fabricantes not in operadores_nao_cad:
                 operadores_nao_cad[nome_fabricantes] = {
-                    'Código Interno'         : None,
+                    'Código Interno'         : row['Manufacturer #'],
                     'Nome'                   : nome_fabricantes,
                     'Código TIN'             : None,
                     'País'                   : row['COO'],
@@ -142,9 +152,9 @@ def criacao_planilha_catalogo(planilhaOg):
                     'Remover'                : None,
                 }
                 
-                operadores_nao_cad_iden = {
-                    'Operador(Código Interno)' : None,
-                    'Número'                   : None,
+                operadores_nao_cad_iden[nome_fabricantes] = {
+                    'Operador(Código Interno)' : row['Manufacturer #'],
+                    'Número'                   : row['Manufacturer #'],
                     'Código'                   : None,
                     'Mensagem Importação'      : None,
                     'Remover'                  : None,
@@ -157,11 +167,11 @@ def criacao_planilha_catalogo(planilhaOg):
     
     df_produtos_naocad = pd.DataFrame(produtos_nao_cad, columns=HEADERS_PRODUTOS)
     df_identificadores_naocad = pd.DataFrame(identificadores_nao_cad, columns=HEADERS_IDENTIFICADORES)
-    df_fabricantes_naocad = pd.DataFrame(columns=HEADERS_FABRICANTES)
+    df_fabricantes_naocad = pd.DataFrame(fabricantes_nao_cad, columns=HEADERS_FABRICANTES)
     df_unidade_negocio_naocad = pd.DataFrame(columns=HEADERS_UNIDADES_NEGOCIO)
     
     df_operadores_naocad = pd.DataFrame(list(operadores_nao_cad.values()), columns=HEADERS_OPERADORES)
-    df_identificadores_operadores_vazio = pd.DataFrame(columns=HEADERS_OPERADORES_IDEN)
+    df_identificadores_operadores_vazio = pd.DataFrame(list(operadores_nao_cad_iden.values()),columns=HEADERS_OPERADORES_IDEN)
     
     itens_nao_cadastrados = {
         'Produtos'                : df_produtos_naocad,
