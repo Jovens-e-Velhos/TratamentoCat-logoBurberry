@@ -125,15 +125,15 @@
     color: var(--text-dim);
   }
 
-  /* --- MUDANÇA NO CSS: Input escondido e pointer-events desativados --- */
+  /* Input real fica oculto, abrimos via Javascript quando o usuário clicar na caixa */
   .drop-zone input[type=file] {
     display: none;
   }
-
+  
+  /* Textos dentro da caixa ignoram o mouse para não quebrar o arrastar e soltar */
   .drop-zone * {
     pointer-events: none;
   }
-  /* --------------------------------------------------------------------- */
 
   .file-badge {
     display: inline-flex;
@@ -396,7 +396,6 @@
 let dataBrazil = null;
 let dataFab = null;
 
-/* --- MUDANÇA NO JS: setupDrop reformulado para evitar conflitos de eventos --- */
 function setupDrop(dropId, inputId, badgeId, onLoad) {
   const zone = document.getElementById(dropId);
   const input = document.getElementById(inputId);
@@ -418,17 +417,21 @@ function setupDrop(dropId, inputId, badgeId, onLoad) {
     reader.readAsArrayBuffer(file);
   };
 
-  // 1. Lida com o CLIQUE (abre o seletor de arquivos)
-  zone.addEventListener('click', () => input.click());
+  // 1. CLIQUE: Abre o gerenciador de arquivos
+  zone.addEventListener('click', (e) => {
+    // Apenas aciona o clique se não for o próprio input emitindo (evita loop)
+    if (e.target !== input) {
+      input.click();
+    }
+  });
 
-  // Lida com o arquivo escolhido via clique na janela
   input.addEventListener('change', e => {
     if (e.target.files[0]) readFile(e.target.files[0]);
   });
 
-  // 2. Lida com o ARRASTAR E SOLTAR (Drag & Drop)
+  // 2. DRAG AND DROP: Arrasta e solta o arquivo na tela
   zone.addEventListener('dragenter', e => {
-    e.preventDefault(); // Obrigatório para o navegador aceitar o drop
+    e.preventDefault(); 
     zone.classList.add('dragover');
   });
 
@@ -444,13 +447,11 @@ function setupDrop(dropId, inputId, badgeId, onLoad) {
   zone.addEventListener('drop', e => {
     e.preventDefault();
     zone.classList.remove('dragover');
-    // Lê o arquivo que foi solto na tela
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       readFile(e.dataTransfer.files[0]);
     }
   });
 }
-/* ---------------------------------------------------------------------------- */
 
 setupDrop('drop-brazil', 'file-brazil', 'badge-brazil', (data, name) => { dataBrazil = data; });
 setupDrop('drop-fab', 'file-fab', 'badge-fab', (data, name) => { dataFab = data; });
