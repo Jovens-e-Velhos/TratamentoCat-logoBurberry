@@ -125,9 +125,15 @@
     color: var(--text-dim);
   }
 
+  /* --- MUDANÇA NO CSS: Input escondido e pointer-events desativados --- */
   .drop-zone input[type=file] {
-    position: absolute; inset: 0; opacity: 0; cursor: pointer;
+    display: none;
   }
+
+  .drop-zone * {
+    pointer-events: none;
+  }
+  /* --------------------------------------------------------------------- */
 
   .file-badge {
     display: inline-flex;
@@ -390,6 +396,7 @@
 let dataBrazil = null;
 let dataFab = null;
 
+/* --- MUDANÇA NO JS: setupDrop reformulado para evitar conflitos de eventos --- */
 function setupDrop(dropId, inputId, badgeId, onLoad) {
   const zone = document.getElementById(dropId);
   const input = document.getElementById(inputId);
@@ -402,6 +409,7 @@ function setupDrop(dropId, inputId, badgeId, onLoad) {
       const ws = wb.Sheets[wb.SheetNames[0]];
       const data = XLSX.utils.sheet_to_json(ws, { defval: null });
       onLoad(data, file.name);
+      
       badge.style.display = 'inline-flex';
       badge.querySelector('span').textContent = file.name;
       zone.classList.add('loaded');
@@ -410,15 +418,39 @@ function setupDrop(dropId, inputId, badgeId, onLoad) {
     reader.readAsArrayBuffer(file);
   };
 
-  input.addEventListener('change', e => e.target.files[0] && readFile(e.target.files[0]));
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+  // 1. Lida com o CLIQUE (abre o seletor de arquivos)
+  zone.addEventListener('click', () => input.click());
+
+  // Lida com o arquivo escolhido via clique na janela
+  input.addEventListener('change', e => {
+    if (e.target.files[0]) readFile(e.target.files[0]);
+  });
+
+  // 2. Lida com o ARRASTAR E SOLTAR (Drag & Drop)
+  zone.addEventListener('dragenter', e => {
+    e.preventDefault(); // Obrigatório para o navegador aceitar o drop
+    zone.classList.add('dragover');
+  });
+
+  zone.addEventListener('dragover', e => {
+    e.preventDefault();
+    zone.classList.add('dragover');
+  });
+
+  zone.addEventListener('dragleave', () => {
+    zone.classList.remove('dragover');
+  });
+
   zone.addEventListener('drop', e => {
     e.preventDefault();
     zone.classList.remove('dragover');
-    if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0]);
+    // Lê o arquivo que foi solto na tela
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      readFile(e.dataTransfer.files[0]);
+    }
   });
 }
+/* ---------------------------------------------------------------------------- */
 
 setupDrop('drop-brazil', 'file-brazil', 'badge-brazil', (data, name) => { dataBrazil = data; });
 setupDrop('drop-fab', 'file-fab', 'badge-fab', (data, name) => { dataFab = data; });
