@@ -443,16 +443,16 @@ function log(msg, type = 'log') {
 // ─── DICIONÁRIO DE TRADUÇÃO ──────────────────────────────────────────────────
 
 const DICIONARIO_TRADUCAO = {
-  'LAMB LEATHER (OVIS ARIES ARIES)': 'COURO DE CORDEIRO',
-  'LAMB SHEARLING (OVIS ARIES ARIES)': 'COURO CAPRINO',
-  'MULBERRY SEDA': 'SEDA',
-  'MOHAIR': 'PELO DE CABRA',
-  'COMPRIMENTO: On': 'COMPRIMENTO: NO JOELHO',
-  'METALLIC FIBRE (COATED FIBRES)': 'FIBRA METALICA',
-  'PARTIAL': 'CURTA',
-  'MANGA: Sleeveless': 'SEM MANGA',
-  'SHEEP GRAIN LEATHER (OVIS ARIES ARIES)': 'COURO BOVINO',
-  'CALF GRAIN LEATHER (BOS TAURUS)': 'COURO BOVINO',
+  'LAMB LEATHER (OVIS ARIES ARIES)': 'COURO DE CORDEIRO', 
+  'LAMB SHEARLING (OVIS ARIES ARIES)': 'COURO CAPRINO', 
+  'MULBERRY SEDA': 'SEDA', 
+  'MOHAIR': 'PELO DE CABRA', 
+  'COMPRIMENTO: On': 'COMPRIMENTO: NO JOELHO', 
+  'METALLIC FIBRE (COATED FIBRES)': 'FIBRA METALICA', 
+  'PARTIAL': 'CURTA', 
+  'MANGA: Sleeveless': 'SEM MANGA', 
+  'SHEEP GRAIN LEATHER (OVIS ARIES ARIES)': 'COURO BOVINO', 
+  'CALF GRAIN LEATHER (BOS TAURUS)': 'COURO BOVINO', 
   'O-MINI BAG': 'BOLSA', 'SQUARE SCARF': 'LENÇO QUADRADO',
   '1 PIECE SWIMMING SUIT': 'MAIO (MALHA OU TECIDO)',
   'ACCESSOIRE VOYAGE': 'ACESSORIO DE VIAGEM', 'ACETATE': 'ACETATO',
@@ -547,8 +547,10 @@ const DICIONARIO_TRADUCAO = {
   'WIDE LEG PANT': 'CALÇA LARGA', 'WITH HANDLE': 'COM ALÇA', 'WOOD': 'MADEIRA',
   'WOOL': 'LA', 'Long': 'LONGO', 'WOVEN': 'TECIDO PLANO',
   'Straight': 'RETÍLINEA', 'FORRO: Full': 'FORRO COMPLETO',
+  'CALF GRAIN LEATHER (BOS TAURUS)': 'COURO BOVINO',
   'COW GRAIN LEATHER (BOS TAURUS)': 'COURO BOVINO',
   'Above knee': 'ACIMA DO JOELHO', 'Half lined': 'MEIO FORRO',
+  'LAMB LEATHER (OVIS ARIES ARIES)': 'COURO DE CORDEIRO',
 };
 
 // ─── REGRAS DE LIMPEZA ────────────────────────────────────────────────────────
@@ -561,10 +563,6 @@ const REGRAS = {
   'SOLA':        ['CASACO','CARDIGA','CAMISETA','CAMISA','BOLSA','PORTA CARTAO','CALCA','SUETER','ECHARPE','LENCO','CINTO','OCULOS','VELA'],
 };
 
-// FIX: a string "(MANGA: N/A" estava sendo fechada antes do parêntese,
-// deixando um ")" solto fora da string — isso quebrava o parse de TODO o
-// script (SyntaxError), impedindo até os listeners de anexo de arquivo
-// de serem registrados. Corrigido para '(MANGA: N/A)'.
 const PADROES_REMOVER = ['(CANADA ONLY)', '(FOR FILLING ONLY)', '(COMPRIMENTO: N/A)', '(FORRO: N/A)', '(MANGA: N/A)', '(MALHA: N/A)', '(SOLA: N/A)', '(knee)', '(--)', '(EXCLUSIVE OF COATING)', '(ONLY CANADA)'];
 
 function remocaoCampo(texto, campo) {
